@@ -61,7 +61,7 @@ if ($_POST[messagename]!="" && $_POST[messagetext]!="")
       <div class="box-body">
         <div class="form-group">
           <label for="exampleInputPassword1">姓名</label>
-          <input type="text" class="form-control" id="name" value= <?echo $loginname;?> name="messagename">
+          <input type="text" class="form-control" id="name" value= <?echo $loginname;?> name="messagename" readonly="true" >
         </div>
         <div class="form-group">
           <label>留言訊息</label>

@@ -62,7 +62,7 @@ if ($_POST[replyname]!="" && $_POST[replytext]!="" && $_POST[guestbookid]!="")
       <div class="box-body">
         <div class="form-group">
           <label for="exampleInputPassword1">姓名</label>
-          <input type="text" class="form-control" id="name" value=<? echo $loginname; ?> name="replyname">
+          <input type="text" class="form-control" id="name" value=<? echo $loginname; ?> name="replyname" readonly="true">
         </div>
         <div class="form-group">
           <label>回覆訊息</label>
