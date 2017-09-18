@@ -1,14 +1,13 @@
 
 
 
-  
+
  <!-- <?php
 // include _DIR_."pdo.php";
 ?> -->
 
 
 <?
-123131313
 $hostname = 'kusoinlol.synology.me';
 $username = 'rita_liu';
 $password = 'rita_liu';
@@ -23,7 +22,7 @@ $db_name="rita_liu";
     //echo '連線成功';
     $db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION); //錯誤訊息提醒
 
-    if ($_GET[account]!="" && $_GET[psw]!="") 
+    if ($_GET[account]!="" && $_GET[psw]!="")
     {
       $sql="Select * from 0915member where account='$_GET[account]' and pwd='$_GET[psw]' ";
       $result=$db->query($sql);
