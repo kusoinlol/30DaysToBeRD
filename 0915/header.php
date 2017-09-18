@@ -24,7 +24,7 @@
               <!-- User image -->
               <li class="user-header">
                 <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
-                <p>Alexander Pierce</p>
+                <p><? echo $loginname; ?></p>
               </li>
               <!-- Menu Footer-->
               <li class="user-footer">

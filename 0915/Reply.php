@@ -12,7 +12,7 @@ if ($_POST[replyname]!="" && $_POST[replytext]!="" && $_POST[guestbookid]!="")
         $count=$db->exec(" INSERT INTO `0915reply` (`guestBookId`, `memberId`, `message`) VALUES ('$_POST[guestbookid]', $memberid, '$_POST[replytext]');");
         echo $count;
 
-        $count=$db->exec(" UPDATE `0915guestbook` SET replayCount = replayCount + 1  WHERE id = '$_POST[guestbookid]' ");
+        $count=$db->exec(" UPDATE `0915guestbook` SET replayCount = replayCount + 1  WHERE guestBookId = '$_POST[guestbookid]' ");
         echo $count;
 
         header("Location:GuestBook.php");

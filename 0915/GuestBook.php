@@ -4,9 +4,10 @@
 include("connect.php");
 include("checklogin.php");
 
-if ($_GET[memberid] == $memberid && $_GET[guestbookid]!="")
+// 刪除留言
+if ($_GET[memberid] == $memberid && $_GET[guestbookid]!="" && $_GET[replayid]=="" )
     {
-      $count=$db->exec("delete from 0915guestbook where memberId=$memberid and id=$_GET[guestbookid] ");
+      $count=$db->exec("delete from 0915guestbook where memberId=$memberid and guestBookId=$_GET[guestbookid] ");
       echo $count;
 
       $count=$db->exec("delete from 0915reply where guestBookId=$_GET[guestbookid] ");
@@ -15,22 +16,23 @@ if ($_GET[memberid] == $memberid && $_GET[guestbookid]!="")
         header("Location:GuestBook.php");
 
     }
-    elseif ($_GET[memberid] != $memberid && $_GET[guestbookid]!="") 
+elseif ($_GET[memberid] != $memberid && $_GET[guestbookid]!="") 
     {
       $error = "只可以刪除自己的留言";
     }
+
 if ($_GET[memberid] == $memberid && $_GET[replayid]!="" && $_GET[guestbookid]!="")
     {
-      $count=$db->exec("delete from 0915reply where memberId=$memberid and id=$_GET[replayid] ");
+      $count=$db->exec("delete from 0915reply where memberId=$memberid and replyId=$_GET[replayid] ");
       echo $count;
 
-      $count=$db->exec(" UPDATE `0915guestbook` SET replayCount = replayCount - 1  WHERE id = '$_GET[guestbookid]' ");
+      $count=$db->exec(" UPDATE `0915guestbook` SET replayCount = replayCount - 1  WHERE guestBookId = '$_GET[guestbookid]' ");
         echo $count;
 
         header("Location:GuestBook.php");
 
     }
-    elseif ($_GET[memberid] != $memberid && $_GET[replayid]!="" && $_GET[guestbookid]!="") 
+elseif ($_GET[memberid] != $memberid && $_GET[replayid]!="" && $_GET[guestbookid]!="") 
     {
       $error = "只可以刪除自己的留言";
     }
@@ -113,7 +115,8 @@ if ($_GET[memberid] == $memberid && $_GET[replayid]!="" && $_GET[guestbookid]!="
 
            <?
 
-                $sql="Select * from 0915guestbook";
+                $sql="select `0915guestbook`.`guestBookId`,`0915guestbook`.`memberid`,`0915guestbook`.`message`,`0915guestbook`.`replayCount`,`0915guestbook`.`creatTime`,`0915member`.`id`, `0915member`.`name` from `0915guestbook` JOIN `0915member` 
+                  ON `0915guestbook`.`memberId` = `0915member`.`id`";
                 $result=$db->query($sql);
 
                 while($row=$result->fetch(PDO::FETCH_OBJ))
@@ -122,21 +125,15 @@ if ($_GET[memberid] == $memberid && $_GET[replayid]!="" && $_GET[guestbookid]!="
                      echo "<div class=\"item\">
                            <img src=\"dist/img/user4-128x128.jpg\" alt=\"user image\" class=\"online\">";
     
-                        $sql2=" Select * from 0915member where id=$row->memberid ";
-                        $result2=$db->query($sql2);
-                        while($row2=$result2->fetch(PDO::FETCH_OBJ))
-                          {
-                            $gumembername=$row2->name;
-                            $gumemberid=$row2->id;
-                          }
+                      
                       
                           echo "<p class=\"message\"> 
                                 <a href=\"#\" class=\"name\"> ";
-                          echo $gumembername;
+                          echo $row->name;
                           echo "</a>";
                           echo " <span class=\"pull-right\"> " ;
-                          echo "<a href=\"Reply.php?guestBookId=$row->id\" class=\"label label label-success\">回覆留言</a>";
-                        echo "<a href=\"GuestBook.php?memberid=$gumemberid&guestbookid=$row->id \" class=\"label label label-danger\">刪除</a>";
+                          echo "<a href=\"Reply.php?guestBookId=$row->guestBookId\" class=\"label label label-success\">回覆留言</a>";
+                        echo "<a href=\"GuestBook.php?memberid=$row->id&guestbookid=$row->guestBookId \" class=\"label label label-danger\">刪除</a>";
                           echo "</span>";
                           echo "<small class=\"text-muted\"><i class=\"fa fa-clock-o\"></i> ";
                           echo $row->creatTime;
@@ -152,7 +149,9 @@ if ($_GET[memberid] == $memberid && $_GET[replayid]!="" && $_GET[guestbookid]!="
                           if ($row->replayCount > 0) 
                           {
                             
-                            $sql3=" Select * from 0915reply where guestBookId=$row->id ";
+                            $sql3=" select `0915reply`.`replyId`,`0915reply`.`guestBookId`,`0915member`.`id`,`0915reply`.`message`,`0915reply`.`creatTime`,`0915member`.`name` from `0915reply` JOIN `0915member` 
+                            ON `0915reply`.`memberId` = `0915member`.`id`
+                            where guestBookId=$row->guestBookId ";
                             $result3=$db->query($sql3);
                             while($row3=$result3->fetch(PDO::FETCH_OBJ))
                             {
@@ -161,22 +160,13 @@ if ($_GET[memberid] == $memberid && $_GET[replayid]!="" && $_GET[guestbookid]!="
                                     <small class=\"text-muted pull-right\"><i class=\"fa fa-clock-o\"></i> ";
                               echo $row3->creatTime;
                               echo "</small> ";
-
-                              $sql4=" Select * from 0915member where id=$row3->memberId ";
-                              $result4=$db->query($sql4);
-                              while($row4=$result4->fetch(PDO::FETCH_OBJ))
-                             {
-                                $remembername=$row4->name;
-                                $rememberid=$row4->id;
-                              }
-
-                              echo $remembername;
+                              echo $row3->name;
                               echo "</a>
                                     <p>";
                               echo $row3->message; 
                               echo "</p>
                                   <div class=\"pull-right\">
-                                  <a href=\"GuestBook.php?memberid=$rememberid&replayid=$row3->id&guestbookid=$row->id \" class=\"label label-danger\">刪除</a></div>       
+                                  <a href=\"GuestBook.php?memberid=$row3->id&replayid=$row3->replyId&guestbookid=$row3->guestBookId \" class=\"label label-danger\">刪除</a></div>       
                                     </div>";
                               
 
