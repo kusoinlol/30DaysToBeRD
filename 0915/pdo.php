@@ -16,9 +16,9 @@ try{
 
     //Query SQL
     
-    $sql="Select * from 0915member where account='abc@com.tw'";
-    $result=$db->query($sql);
-    while($row=$result->fetch(PDO::FETCH_OBJ)){
+    $sth = $db->prepare("Select * from Member where email=?,name=?");
+    $sth->execute(array('jarvis@soez.tw'));
+    while($row=$sth->fetch(PDO::FETCH_OBJ)){
         //PDO::FETCH_OBJ 指定取出資料的型態
         echo $row->name."<br/>";
         echo $row->createTime."<br/>";
@@ -32,7 +32,10 @@ try{
     return;
 
     //Update
-    $count=$db->exec("update act set cn_title='中文' where num=3");
+    $sth=$db->prepare("update Member set name=:name where email=:email");
+    $sth->bindValue(":name","三重金城武",PDO::PARAM_STR);
+    $sth->bindValue(":email","jarvis@soez.tw",PDO::PARAM_STR);
+    $sth->execute();
     return;
     
     $db=null; //結束與資料庫連線

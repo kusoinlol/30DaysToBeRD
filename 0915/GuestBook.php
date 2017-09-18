@@ -1,4 +1,44 @@
 
+<?
+
+include("connect.php");
+include("checklogin.php");
+
+if ($_GET[memberid] == $memberid && $_GET[guestbookid]!="")
+    {
+      $count=$db->exec("delete from 0915guestbook where memberId=$memberid and id=$_GET[guestbookid] ");
+      echo $count;
+
+      $count=$db->exec("delete from 0915reply where guestBookId=$_GET[guestbookid] ");
+      echo $count;
+
+        header("Location:GuestBook.php");
+
+    }
+    elseif ($_GET[memberid] != $memberid && $_GET[guestbookid]!="") 
+    {
+      $error = "只可以刪除自己的留言";
+    }
+if ($_GET[memberid] == $memberid && $_GET[replayid]!="" && $_GET[guestbookid]!="")
+    {
+      $count=$db->exec("delete from 0915reply where memberId=$memberid and id=$_GET[replayid] ");
+      echo $count;
+
+      $count=$db->exec(" UPDATE `0915guestbook` SET replayCount = replayCount - 1  WHERE id = '$_GET[guestbookid]' ");
+        echo $count;
+
+        header("Location:GuestBook.php");
+
+    }
+    elseif ($_GET[memberid] != $memberid && $_GET[replayid]!="" && $_GET[guestbookid]!="") 
+    {
+      $error = "只可以刪除自己的留言";
+    }
+
+
+?>
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -22,50 +62,31 @@
   <!-- Google Font -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 </head>
+
+
+
 <body class="hold-transition skin-blue sidebar-mini">
+
+<?
+    if ($error!="") 
+    {
+      echo "<p class=\"login-box-msg\" ><font color=\"red\">";
+      echo "<br>".$error;
+      echo "</font> </p>";
+     
+    }
+?>
+
+
+
+
 <div class="wrapper">
 
-  <header class="main-header">
-    <!-- Logo -->
-    <a href="index2.html" class="logo">
-      <!-- mini logo for sidebar mini 50x50 pixels -->
-      <span class="logo-mini"><b>GuestBook</b></span>
-      <!-- logo for regular state and mobile devices -->
-      <span class="logo-lg"><b>30</b>Days</span>
-    </a>
-    <!-- Header Navbar: style can be found in header.less -->
-    <nav class="navbar navbar-static-top">
-      <div class="navbar-custom-menu">
-        <ul class="nav navbar-nav">
-          <li><a href="#">留言板</a></li>
-          <li><a href="#">會員列表</a></li>
-          <!-- User Account: style can be found in dropdown.less -->
-          <li class="dropdown user user-menu">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <img src="dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
-              <span class="hidden-xs">Alexander Pierce</span>
-            </a>
-            <ul class="dropdown-menu">
-              <!-- User image -->
-              <li class="user-header">
-                <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
-                <p>Alexander Pierce</p>
-              </li>
-              <!-- Menu Footer-->
-              <li class="user-footer">
-                <div class="pull-left">
-                  <a href="#" class="btn btn-default btn-flat">Profile</a>
-                </div>
-                <div class="pull-right">
-                  <a href="#" class="btn btn-default btn-flat">Sign out</a>
-                </div>
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </div>
-    </nav>
-  </header>
+  
+<? include("header.php"); ?>
+
+
+
    <div class="box box-success">
       <div class="box-header">
         <i class="fa fa-comments-o"></i>
@@ -74,74 +95,106 @@
 
         <div class="box-tools pull-right" data-toggle="tooltip" title="Status">
           <div class="btn-group" data-toggle="btn-toggle">
-            <button type="button" class="btn btn-default"><i class="fa fa-square text-green"> 新增留言</i>
+             <i class="fa fa-square text-green"> 
+                <input type="button" value="新增留言" onclick="location.href='Message.php' ">
+             </i>
+
             </button>
           </div>
         </div>
       </div>
+
+
       <div class="box-body chat" id="chat-box">
         <!-- chat item -->
-        <div class="item">
-          <img src="dist/img/user4-128x128.jpg" alt="user image" class="online">
+        
 
-          <p class="message">
-            <a href="#" class="name">
-              Mike Doe
-            </a>
-            <span class="pull-right">
-            <a href="#" class="label label label-success">回覆留言</a>
-            <a href="#" class="label label label-danger">刪除</a>
-            </span>
-            <small class="text-muted"><i class="fa fa-clock-o"></i> 2:15</small>
-            <div>
-            I would like to meet you to discuss the latest news about
-            the arrival of the new theme. They say it is going to be one the
-            best themes on the market
-            </div>
-          </p>
-          <div class="attachment">
-            <a href="#" class="name">
-              <small class="text-muted pull-right"><i class="fa fa-clock-o"></i> 2:15</small>
-              Mike Doe
-            </a>
-            <p>Theme-thumbnail-image.jpg</p>
-            <div class="pull-right"><a href="#" class="label label-danger">刪除</a></div>       
-          </div>
-          <div class="attachment">
-            <a href="#" class="name">
-              <small class="text-muted pull-right"><i class="fa fa-clock-o"></i> 2:15</small>
-              Mike Doe
-            </a>
-            <p>Theme-thumbnail-image.jpg</p>
-            <div class="pull-right"><a href="#" class="label label-danger">刪除</a></div>
-          </div>
-          <!-- /.attachment -->
-        </div>
-        <!-- /.item -->
-        <!-- chat item -->
-        <div class="item">
-          <img src="dist/img/user4-128x128.jpg" alt="user image" class="online">
 
-          <p class="message">
-            <a href="#" class="name">
-              Mike Doe
-            </a>
-            <span class="pull-right">
-            <a href="#" class="label label label-success">回覆留言</a>
-            <a href="#" class="label label label-danger">刪除</a>
-            </span>
-            <small class="text-muted"><i class="fa fa-clock-o"></i> 2:15</small>
-            <div>
-            I would like to meet you to discuss the latest news about
-            the arrival of the new theme. They say it is going to be one the
-            best themes on the market
-            </div>
-          </p>
-          <!-- /.attachment -->
-        </div>
-        <!-- /.item -->
 
-      </div>
+           <?
+
+                $sql="Select * from 0915guestbook";
+                $result=$db->query($sql);
+
+                while($row=$result->fetch(PDO::FETCH_OBJ))
+                  {
+                     //PDO::FETCH_OBJ 指定取出資料的型態
+                     echo "<div class=\"item\">
+                           <img src=\"dist/img/user4-128x128.jpg\" alt=\"user image\" class=\"online\">";
+    
+                        $sql2=" Select * from 0915member where id=$row->memberid ";
+                        $result2=$db->query($sql2);
+                        while($row2=$result2->fetch(PDO::FETCH_OBJ))
+                          {
+                            $gumembername=$row2->name;
+                            $gumemberid=$row2->id;
+                          }
+                      
+                          echo "<p class=\"message\"> 
+                                <a href=\"#\" class=\"name\"> ";
+                          echo $gumembername;
+                          echo "</a>";
+                          echo " <span class=\"pull-right\"> " ;
+                          echo "<a href=\"Reply.php?guestBookId=$row->id\" class=\"label label label-success\">回覆留言</a>";
+                        echo "<a href=\"GuestBook.php?memberid=$gumemberid&guestbookid=$row->id \" class=\"label label label-danger\">刪除</a>";
+                          echo "</span>";
+                          echo "<small class=\"text-muted\"><i class=\"fa fa-clock-o\"></i> ";
+                          echo $row->creatTime;
+                          echo "</small>";
+                          echo "<div> ";
+                          echo $row->message;
+                          echo "</div>";
+                          echo "</p>";
+
+                          
+                          //回覆開始
+                          
+                          if ($row->replayCount > 0) 
+                          {
+                            
+                            $sql3=" Select * from 0915reply where guestBookId=$row->id ";
+                            $result3=$db->query($sql3);
+                            while($row3=$result3->fetch(PDO::FETCH_OBJ))
+                            {
+                              echo " <div class=\"attachment\">
+                                      <a href=\"#\" class=\"name\">
+                                    <small class=\"text-muted pull-right\"><i class=\"fa fa-clock-o\"></i> ";
+                              echo $row3->creatTime;
+                              echo "</small> ";
+
+                              $sql4=" Select * from 0915member where id=$row3->memberId ";
+                              $result4=$db->query($sql4);
+                              while($row4=$result4->fetch(PDO::FETCH_OBJ))
+                             {
+                                $remembername=$row4->name;
+                                $rememberid=$row4->id;
+                              }
+
+                              echo $remembername;
+                              echo "</a>
+                                    <p>";
+                              echo $row3->message; 
+                              echo "</p>
+                                  <div class=\"pull-right\">
+                                  <a href=\"GuestBook.php?memberid=$rememberid&replayid=$row3->id&guestbookid=$row->id \" class=\"label label-danger\">刪除</a></div>       
+                                    </div>";
+                              
+
+                              }
+                          }
+                          
+                          //回覆結束
+
+
+                          echo  "<div class=\"item\">";
+                        
+                        
+                   
+                 }
+
+            ?>
+
+          
       <!-- /.chat -->
     </div>
 </div>

@@ -1,12 +1,5 @@
 
 
-
-
- <!-- <?php
-// include _DIR_."pdo.php";
-?> -->
-
-
 <?
 $hostname = 'kusoinlol.synology.me';
 $username = 'rita_liu';
