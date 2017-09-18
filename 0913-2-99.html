@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>九九乘法表</title>
+</head>
+<body>
+
+<?
+	echo "123";
+?>
+
+
+<table width="800" border="1">
+
+	<?
+		for ($i=1; $i<=9 ; $i++) 
+		{ 
+			echo "<TR>";
+			for($b=1; $b<=9; $b++)
+			{
+				 echo "<TD>" $i."*".$b."=" .$i*$b."<TD>";
+
+			}
+			echo "<TR/>";
+		}
+
+	?>
+
+</table>
+
+</body>
+</html>
