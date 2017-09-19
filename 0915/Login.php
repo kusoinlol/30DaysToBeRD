@@ -128,6 +128,3 @@ $db_name  = "rita_liu";
 </script>
 </body>
 </html>
-
-
-
