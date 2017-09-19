@@ -54,3 +54,20 @@ $which = date("N",$thismonthtime);//該月第一天為星期幾
 
 </body>
 </html>
+
+
+<?
+
+$a = array(array(5,4,4),4,3,2,1);
+foreach ($a as $key => $value) {
+	echo "$key : $value <br>";
+}
+
+?>
+
+
+
+
+
+
+

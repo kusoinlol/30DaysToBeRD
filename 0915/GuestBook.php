@@ -1,43 +1,31 @@
 
 <?
-
+  
+  
 include("connect.php");
 include("checklogin.php");
 
 // 刪除留言
-if ($_GET[memberid] == $memberid && $_GET[guestbookid]!="" && $_GET[replayid]=="" )
-    {
-      $count=$db->exec("delete from 0915guestbook where memberId=$memberid and guestBookId=$_GET[guestbookid] ");
-      echo $count;
+if ($_GET[memberid] == $memberid && $_GET[guestbookid] != "" && $_GET[replayid] == "") {
+      $db->beginTransaction();
 
-      $count=$db->exec("delete from 0915reply where guestBookId=$_GET[guestbookid] ");
-      echo $count;
+      $db->exec("delete from 0915guestbook where memberId=$memberid and guestBookId=$_GET[guestbookid]");
+      $db->exec("delete from 0915reply where guestBookId=$_GET[guestbookid]");
+      header("Location:GuestBook.php");
 
-        header("Location:GuestBook.php");
-
-    }
-elseif ($_GET[memberid] != $memberid && $_GET[guestbookid]!="") 
-    {
+      $db->commit();
+    } elseif ($_GET[memberid] != $memberid && $_GET[guestbookid] != "") {
       $error = "只可以刪除自己的留言";
-    }
+  }
 
-//刪除回覆
-
-if ($_GET[memberid] == $memberid && $_GET[replayid]!="" && $_GET[guestbookid]!="")
-    {
-      $count=$db->exec("delete from 0915reply where memberId=$memberid and replyId=$_GET[replayid] ");
-      echo $count;
-
-      $count=$db->exec(" UPDATE `0915guestbook` SET replayCount = replayCount - 1  WHERE guestBookId = '$_GET[guestbookid]' ");
-        echo $count;
-
-        header("Location:GuestBook.php");
-
-    }
-elseif ($_GET[memberid] != $memberid && $_GET[replayid]!="" && $_GET[guestbookid]!="") 
-    {
+// 刪除回覆
+if ($_GET[memberid] == $memberid && $_GET[replayid] != "" && $_GET[guestbookid] != "") {
+      $db->exec("delete from 0915reply where memberId=$memberid and replyId=$_GET[replayid]");
+      $db->exec(" UPDATE `0915guestbook` SET replayCount = replayCount - 1  WHERE guestBookId = '$_GET[guestbookid]' ");
+      header("Location:GuestBook.php");
+    } elseif ($_GET[memberid] != $memberid && $_GET[replayid] != "" && $_GET[guestbookid] != "") {
       $error = "只可以刪除自己的留言";
-    }
+      }
 
 
 ?>
@@ -96,8 +84,15 @@ elseif ($_GET[memberid] != $memberid && $_GET[replayid]!="" && $_GET[guestbookid
         <i class="fa fa-comments-o"></i>
 
         <h3 class="box-title">留言板</h3>
-
+        <?
+          $sql = "select count(`guestBookId`) as `dbsum` from `0915guestbook`";
+          $result = $db -> query($sql);
+          $row = $result -> fetch(PDO::FETCH_OBJ);
+          $sum = $row->dbsum;
+        ?>
+        <p>留言板總筆數 <? echo $sum; ?> </p>
         <div class="box-tools pull-right" data-toggle="tooltip" title="Status">
+
           <div class="btn-group" data-toggle="btn-toggle">
              <i class="fa fa-square text-green"> 
                 <input type="button" value="新增留言" onclick="location.href='Message.php' ">
@@ -115,10 +110,9 @@ elseif ($_GET[memberid] != $memberid && $_GET[replayid]!="" && $_GET[guestbookid
 
 
 
-           <?
-
-                $sql="select `0915guestbook`.`guestBookId`,`0915guestbook`.`memberid`,`0915guestbook`.`message`,`0915guestbook`.`replayCount`,`0915guestbook`.`creatTime`,`0915member`.`id`, `0915member`.`name` from `0915guestbook` JOIN `0915member` 
-                  ON `0915guestbook`.`memberId` = `0915member`.`id`";
+              <?
+                $sql="select `0915guestbook`.`guestBookId`,`0915guestbook`.`memberid`,`0915guestbook`.`message`,`0915guestbook`.`replayCount`,`0915guestbook`.`creatTime`,`0915member`.`id`, `0915member`.`name`, `0915member`.`creatTime` as `memberCreatTime` from `0915guestbook` JOIN `0915member` 
+                  ON `0915guestbook`.`memberId` = `0915member`.`id` order by `creatTime` DESC ";
                 $result=$db->query($sql);
 
                 while($row=$result->fetch(PDO::FETCH_OBJ))
@@ -138,7 +132,7 @@ elseif ($_GET[memberid] != $memberid && $_GET[replayid]!="" && $_GET[guestbookid
                         echo "<a href=\"GuestBook.php?memberid=$row->id&guestbookid=$row->guestBookId \" class=\"label label label-danger\">刪除</a>";
                           echo "</span>";
                           echo "<small class=\"text-muted\"><i class=\"fa fa-clock-o\"></i> ";
-                          echo $row->creatTime;
+                          echo "留言時間：".$row->creatTime."，加入會員時間：".$row->memberCreatTime;
                           echo "</small>";
                           echo "<div> ";
                           echo nl2br($row->message);
@@ -149,18 +143,18 @@ elseif ($_GET[memberid] != $memberid && $_GET[replayid]!="" && $_GET[guestbookid
                           //回覆開始
                           
                           if ($row->replayCount > 0) 
-                          {
-                            
-                            $sql3=" select `0915reply`.`replyId`,`0915reply`.`guestBookId`,`0915member`.`id`,`0915reply`.`message`,`0915reply`.`creatTime`,`0915member`.`name` from `0915reply` JOIN `0915member` 
+                          {                  
+                            $sql3=" select `0915reply`.`replyId`,`0915reply`.`guestBookId`,`0915member`.`id`,`0915reply`.`message`,`0915reply`.`creatTime`,`0915member`.`name`, `0915member`.`creatTime` as `memberCreatTime` from `0915reply` JOIN `0915member` 
                             ON `0915reply`.`memberId` = `0915member`.`id`
-                            where guestBookId=$row->guestBookId ";
+                            where guestBookId=$row->guestBookId 
+                            ORDER BY `creatTime` DESC ";
                             $result3=$db->query($sql3);
                             while($row3=$result3->fetch(PDO::FETCH_OBJ))
                             {
                               echo " <div class=\"attachment\">
                                       <a href=\"#\" class=\"name\">
                                     <small class=\"text-muted pull-right\"><i class=\"fa fa-clock-o\"></i> ";
-                              echo $row3->creatTime;
+                              echo "回覆時間：".$row3->creatTime."，加入會員時間：".$row3->memberCreatTime;
                               echo "</small> ";
                               echo $row3->name;
                               echo "</a>
@@ -196,5 +190,27 @@ elseif ($_GET[memberid] != $memberid && $_GET[replayid]!="" && $_GET[guestbookid
 <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
 <!-- Bootstrap 3.3.7 -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<P>留言板上有留言的會員名稱(不重複)：  
+<?
+// 查詢有留言的會員(不重複)
+  $sql5="select DISTINCT `0915member`.`name` from `0915guestbook` JOIN `0915member` ON `0915guestbook`.`memberId` = `0915member`.`id` ";
+  $result5=$db->query($sql5);
+  while($row5=$result5->fetch(PDO::FETCH_OBJ)){
+    echo "<br>".$row5->name;
+  }
+?>
+</P>
+<P>留言板上有回覆的會員名稱(不重複)：  
+<?
+// 查詢有回覆的會員(不重複)
+  $sql5="select DISTINCT `0915member`.`name` from `0915reply` JOIN `0915member` ON `0915reply`.`memberId` = `0915member`.`id` ";
+  $result5=$db->query($sql5);
+  while($row5=$result5->fetch(PDO::FETCH_OBJ)){
+    echo "<br>".$row5->name;
+  }
+?>
+</P>
+<a href="GuestBook2hr.php">只看兩小時內的留言</a>
+
 </body>
 </html>

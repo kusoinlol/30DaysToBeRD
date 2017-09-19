@@ -106,10 +106,22 @@ $db_name="rita_liu";
                 </tr>
  -->
                 <?
+                        $sql = "select count(*) as `dbsum` from `0915member`";
+                        $result = $db -> query($sql);
+                        $row = $result -> fetch(PDO::FETCH_OBJ);
+                        $membersum = $row->dbsum;
+                        $page = ceil($membersum / 5);
+                        // 總共有幾頁
 
-                $sql="Select * from 0915member ";
+                // 每頁顯示的資料
+                if ($_GET[page] == "1" || $_GET[page] == "")
+                    $sql = "Select * from 0915member limit 5";
+                else {
+                         $pagecount = ($_GET[page]-1)*5;
+                         $sql = "Select * from `0915member` limit $pagecount , 5" ;
+                     }
+
                 $result=$db->query($sql);
-
                 while($row=$result->fetch(PDO::FETCH_OBJ))
                   {
                      //PDO::FETCH_OBJ 指定取出資料的型態
@@ -138,16 +150,21 @@ $db_name="rita_liu";
              </div>
              <div class="col-sm-7">
                 <div class="dataTables_paginate paging_simple_numbers" id="example2_paginate">
+                  
                    <ul class="pagination">
                       <li class="paginate_button previous disabled" id="example2_previous"><a href="#" aria-controls="example2" data-dt-idx="0" tabindex="0">Previous</a></li>
-                      <li class="paginate_button active"><a href="#" aria-controls="example2" data-dt-idx="1" tabindex="0">1</a></li>
-                      <li class="paginate_button "><a href="#" aria-controls="example2" data-dt-idx="2" tabindex="0">2</a></li>
-                      <li class="paginate_button "><a href="#" aria-controls="example2" data-dt-idx="3" tabindex="0">3</a></li>
-                      <li class="paginate_button "><a href="#" aria-controls="example2" data-dt-idx="4" tabindex="0">4</a></li>
-                      <li class="paginate_button "><a href="#" aria-controls="example2" data-dt-idx="5" tabindex="0">5</a></li>
-                      <li class="paginate_button "><a href="#" aria-controls="example2" data-dt-idx="6" tabindex="0">6</a></li>
+                      <?                         
+                        // 判斷下方出現按鈕
+                        for ($i="1"; $i<=$page ; $i++) { ?>
+                      <li class="paginate_button "><a href=<?echo "?page=".$i;?> aria-controls="example2" data-dt-idx=<?echo $i;?> tabindex="0"><?echo $i;?></a></li>
+
+                      <?    
+                        }
+                      ?>
+                
                       <li class="paginate_button next" id="example2_next"><a href="#" aria-controls="example2" data-dt-idx="7" tabindex="0">Next</a></li>
                    </ul>
+
                 </div>
              </div>
           </div>

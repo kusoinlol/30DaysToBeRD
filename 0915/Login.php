@@ -4,7 +4,7 @@
 $hostname = 'kusoinlol.synology.me';
 $username = 'rita_liu';
 $password = 'rita_liu';
-$db_name="rita_liu";
+$db_name  = "rita_liu";
 
 // try{
     $db=new PDO("mysql:host=".$hostname.";port=3307
@@ -17,23 +17,33 @@ $db_name="rita_liu";
 
     if ($_GET[account]!="" && $_GET[psw]!="")
     {
-      $sql="Select * from 0915member where account='$_GET[account]' and pwd='$_GET[psw]' ";
-      $result=$db->query($sql);
-
-      // $sql = $db->prepare("Select * from 0915member account='$_GET[account]' and pwd='$_GET[psw]'");
+      // $sql="Select * from 0915member where account='$_GET[account]' and pwd='$_GET[psw]' ";
       // $result=$db->query($sql);
+      // while($row=$result->fetch(PDO::FETCH_OBJ)){
+      //  session_start();
+      //   $_SESSION["account"]=$_GET[account];
+      //   header("Location:MemberList.php");
+      
+      // }
+      // $error="帳號密碼輸入錯誤";
+        
 
-      while($row=$result->fetch(PDO::FETCH_OBJ)){
-        //PDO::FETCH_OBJ 指定取出資料的型態
+      //$sql = $db->prepare("Select * from 0915member where account='$_GET[account]' and pwd='$_GET[psw]' ");
+      
+      $sql = $db -> prepare("Select * from 0915member where account=:account and pwd=:pwd ");
+      $sql -> bindValue(":account",$_GET[account],PDO::PARAM_STR);
+      $sql -> bindValue(":pwd",$_GET[psw],PDO::PARAM_STR);
+      $sql -> execute();
+      if ($row=$sql->fetch(PDO::FETCH_OBJ) != "") {
+        // PDO::FETCH_OBJ 指定取出資料的型態
         session_start();
-        $_SESSION["account"]=$_GET[account];
+        $_SESSION["account"] = $_GET[account];
         header("Location:MemberList.php");
 
     }
 
       $error="帳號密碼輸入錯誤";
-      //echo "not found";
-      //return;
+    
     }
 ?>
 
