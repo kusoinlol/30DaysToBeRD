@@ -4,7 +4,7 @@
 $hostname = 'kusoinlol.synology.me';
 $username = 'rita_liu';
 $password = 'rita_liu';
-$db_name="rita_liu";
+$db_name  = "rita_liu";
 
 // try{
     $db=new PDO("mysql:host=".$hostname.";port=3307
@@ -118,6 +118,3 @@ $db_name="rita_liu";
 </script>
 </body>
 </html>
-
-
-
