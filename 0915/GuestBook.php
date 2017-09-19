@@ -141,7 +141,7 @@ elseif ($_GET[memberid] != $memberid && $_GET[replayid]!="" && $_GET[guestbookid
                           echo $row->creatTime;
                           echo "</small>";
                           echo "<div> ";
-                          echo $row->message;
+                          echo nl2br($row->message);
                           echo "</div>";
                           echo "</p>";
 
@@ -165,7 +165,7 @@ elseif ($_GET[memberid] != $memberid && $_GET[replayid]!="" && $_GET[guestbookid
                               echo $row3->name;
                               echo "</a>
                                     <p>";
-                              echo $row3->message; 
+                              echo nl2br($row3->message); 
                               echo "</p>
                                   <div class=\"pull-right\">
                                   <a href=\"GuestBook.php?memberid=$row3->id&replayid=$row3->replyId&guestbookid=$row3->guestBookId \" class=\"label label-danger\">刪除</a></div>       
