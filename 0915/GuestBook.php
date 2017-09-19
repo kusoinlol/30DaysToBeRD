@@ -21,6 +21,8 @@ elseif ($_GET[memberid] != $memberid && $_GET[guestbookid]!="")
       $error = "只可以刪除自己的留言";
     }
 
+//刪除回覆
+
 if ($_GET[memberid] == $memberid && $_GET[replayid]!="" && $_GET[guestbookid]!="")
     {
       $count=$db->exec("delete from 0915reply where memberId=$memberid and replyId=$_GET[replayid] ");
