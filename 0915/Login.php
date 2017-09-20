@@ -34,7 +34,7 @@ $db_name  = "rita_liu";
       $sql -> bindValue(":account",$_GET[account],PDO::PARAM_STR);
       $sql -> bindValue(":pwd",$_GET[psw],PDO::PARAM_STR);
       $sql -> execute();
-      if ($row=$sql->fetch(PDO::FETCH_OBJ) != "") {
+      if ($sql->fetch(PDO::FETCH_OBJ)) {
         // PDO::FETCH_OBJ 指定取出資料的型態
         session_start();
         $_SESSION["account"] = $_GET[account];

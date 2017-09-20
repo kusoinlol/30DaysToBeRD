@@ -1,44 +1,14 @@
 
 <?php
 
+include("memberclass.php");
 
+session_start();
 
+$member = new Member;
+$member->checklogin($_SESSION["account"]);
+$member->deleteMember($_GET[id]);
 
-$hostname = 'kusoinlol.synology.me';
-$username = 'rita_liu';
-$password = 'rita_liu';
-$db_name="rita_liu";
-
-
-    $db=new PDO("mysql:host=".$hostname.";port=3307
-                dbname=".$db_name, $username, $password,
-                array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
-                //PDO::MYSQL_ATTR_INIT_COMMAND 設定編碼
-    $db->exec('USE '.$db_name);
-    //echo '連線成功';
-    $db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION); //錯誤訊息提醒
-
-    session_start();
-    if ($_SESSION["account"]=="") 
-    {
-      header('Location:Login.php');
-    }
-    else
-    {
-                $sql="Select name from 0915member where account='$_SESSION[account]' ";
-                $result=$db->query($sql);
-                while($row=$result->fetch(PDO::FETCH_OBJ))
-                  {
-                    $loginname = $row->name;
-                  }
-
-    }
-
-    if ($_GET[id]!="") 
-    {
-        $count=$db->exec("delete from 0915member where id='$_GET[id]' ");
-        echo $count;
-    }
 
 
 
@@ -71,7 +41,9 @@ $db_name="rita_liu";
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
 
-  <? include("header.php"); ?>
+  <? $loginname = $member->sessionName;
+      include("header.php"); 
+      ?>
 
     <!-- Main content -->
     <section class="content">
@@ -106,37 +78,7 @@ $db_name="rita_liu";
                 </tr>
  -->
                 <?
-                        $sql = "select count(*) as `dbsum` from `0915member`";
-                        $result = $db -> query($sql);
-                        $row = $result -> fetch(PDO::FETCH_OBJ);
-                        $membersum = $row->dbsum;
-                        $page = ceil($membersum / 5);
-                        // 總共有幾頁
-
-                // 每頁顯示的資料
-                if ($_GET[page] == "1" || $_GET[page] == "")
-                    $sql = "Select * from 0915member limit 5";
-                else {
-                         $pagecount = ($_GET[page]-1)*5;
-                         $sql = "Select * from `0915member` limit $pagecount , 5" ;
-                     }
-
-                $result=$db->query($sql);
-                while($row=$result->fetch(PDO::FETCH_OBJ))
-                  {
-                     //PDO::FETCH_OBJ 指定取出資料的型態
-                  echo "<tr>";
-                   echo "<td>".$row->id."</td>";
-                   echo "<td>".$row->name."</td>";
-                   echo "<td>".$row->account."</td>";
-                   echo "<td>".$row->creatTime."</td>";
-                   echo "<td> 
-                    <button type=\"button\" class=\"btn btn-info\" onClick=\"window.location.href='Profile.php?id=".$row->id."';\">編輯</button>
-                    <button type=\"button\" class=\"btn btn-danger\" onClick=\"window.location.href='MemberList.php?id=".$row->id."';\">刪除</button>
-                  </td>" ;
-                  echo "<tr>";
-                 }
-
+                  $member->memberList($_GET[page]);
                 ?>
                 </tbody>
               </table>
@@ -155,7 +97,7 @@ $db_name="rita_liu";
                       <li class="paginate_button previous disabled" id="example2_previous"><a href="#" aria-controls="example2" data-dt-idx="0" tabindex="0">Previous</a></li>
                       <?                         
                         // 判斷下方出現按鈕
-                        for ($i="1"; $i<=$page ; $i++) { ?>
+                        for ($i="1"; $i<=$member->page ; $i++) { ?>
                       <li class="paginate_button "><a href=<?echo "?page=".$i;?> aria-controls="example2" data-dt-idx=<?echo $i;?> tabindex="0"><?echo $i;?></a></li>
 
                       <?    

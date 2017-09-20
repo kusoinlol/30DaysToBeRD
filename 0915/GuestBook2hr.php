@@ -1,7 +1,9 @@
 
 <?
-  
-  
+
+date_default_timezone_set("Asia/Taipei");
+
+
 include("connect.php");
 include("checklogin.php");
 
@@ -103,6 +105,8 @@ if ($_GET[memberid] == $memberid && $_GET[replayid] != "" && $_GET[guestbookid] 
 
 
               <?
+                //$now2hr = date("Y-m-d G:i:s",time() - 7200);
+
                
                 $sql="select `0915guestbook`.`guestBookId`,`0915guestbook`.`memberid`,`0915guestbook`.`message`,`0915guestbook`.`replayCount`,`0915guestbook`.`creatTime`,`0915member`.`id`, `0915member`.`name`, `0915member`.`creatTime` as `memberCreatTime` 
                 from `0915guestbook`,`0915member`

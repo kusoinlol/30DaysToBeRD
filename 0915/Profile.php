@@ -2,58 +2,15 @@
 
 <?
 
-
-$hostname = 'kusoinlol.synology.me';
-$username = 'rita_liu';
-$password = 'rita_liu';
-$db_name="rita_liu";
-
-// try{
-    $db=new PDO("mysql:host=".$hostname.";port=3307
-                dbname=".$db_name, $username, $password,
-                array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
-                //PDO::MYSQL_ATTR_INIT_COMMAND 設定編碼
-    $db->exec('USE '.$db_name);
-    //echo '連線成功';
-    $db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION); //錯誤訊息提醒
-
-    session_start();
-    if ($_SESSION["account"]=="") 
-    {
-      header('Location:Login.php');
-    }
-    else
-    {
-                $sql="Select name from 0915member where account='$_SESSION[account]' ";
-                $result=$db->query($sql);
-                while($row=$result->fetch(PDO::FETCH_OBJ))
-                  {
-                    $loginname = $row->name;
-                  }
-
-    }
+include("memberclass.php");
+session_start();
 
 
-    if ($_GET[id]!="" ) 
-    {
-      $sql="Select * from 0915member where id='$_GET[id]' ";
-      $result=$db->query($sql);
-      while($row=$result->fetch(PDO::FETCH_OBJ))
-                  {
-                     //PDO::FETCH_OBJ 指定取出資料的型態
-                   $p_name= $row->name;
-                   $p_account= $row->account;
-                   $p_pwd= $row->pwd;   
-                   $p_id= $row->id; 
-                 }
-    }
-    if ($_POST[account]!="" && $_POST[pwd]!="" && $_POST[name]!="" && $_POST[id]!="")  
-     {
-        $count=$db->exec("update 0915member set account='$_POST[account]' , name='$_POST[name]' ,pwd='$_POST[pwd]' where id='$_POST[id]' ");
-        echo $count;
-        header("Location:MemberList.php");
+$member = new Member;
+$member->checklogin($_SESSION["account"]);
+$member->getMember($_GET[id]);
+$member->updateMember($_POST[account],$_POST[pwd],$_POST[name],$_POST[id]);
 
-    }
 
 
 ?>
@@ -85,7 +42,10 @@ $db_name="rita_liu";
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
 
- <? include("header.php"); ?>
+
+  <? $loginname = $member->sessionName;
+      include("header.php"); 
+  ?>
 
 <section class="content">
   <!-- general form elements -->
@@ -99,18 +59,18 @@ $db_name="rita_liu";
       <div class="box-body">
         <div class="form-group">
           <label for="exampleInputPassword1">Name</label>
-          <input type="text" class="form-control" id="name" name="name" value= <? echo $p_name; ?> >
+          <input type="text" class="form-control" id="name" name="name" value= <? echo $member->name; ?> >
         </div>
         <div class="form-group">
           <label for="exampleInputEmail1">Email address</label>
-          <input type="email" class="form-control" placeholder="Enter email" name="account" value= <? echo $p_account; ?> >
+          <input type="email" class="form-control" placeholder="Enter email" name="account" value= <? echo $member->account; ?> >
         </div>
         <div class="form-group">
           <label for="exampleInputPassword1">Password</label>
-          <input type="password" class="form-control" placeholder="Password" name="pwd" value= <? echo $p_pwd; ?> >
+          <input type="password" class="form-control" placeholder="Password" name="pwd" value= <? echo $member->pwd; ?> >
         </div>
       </div>
-      <input type="hidden" name='id' value= <? echo $p_id; ?> >
+      <input type="hidden" name='id' value= <? echo $member->memberid; ?> >
       <!-- /.box-body -->
 
       <div class="box-footer">

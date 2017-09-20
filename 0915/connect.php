@@ -7,6 +7,7 @@ $username = 'rita_liu';
 $password = 'rita_liu';
 $db_name  = "rita_liu";
 
+
 // try{
     $db = new PDO("mysql:host=".$hostname.";port=3307
                 dbname=".$db_name, $username, $password,

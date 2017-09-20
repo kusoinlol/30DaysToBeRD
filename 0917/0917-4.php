@@ -7,4 +7,19 @@ $stu -> show();
 $stu = null;
 
 
+$abc = "1";
+if($abc){
+	echo "123<br>";
+} else {
+	echo "234<br>";
+}
+
+function abc($a,$b)
+{
+	echo "$a.$b";
+}
+
+abc("","2");
+
+
 ?>
